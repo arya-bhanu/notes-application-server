@@ -1,15 +1,48 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Express } from 'express';
 import dotenv from 'dotenv';
-
+import sequelize from './config/database';
+import cors from 'cors';
+import { expressMiddleware } from '@apollo/server/express4'
+import { ApolloServer } from '@apollo/server';
+import resolvers from './resolvers';
+import { typeDefs } from './schema';
 dotenv.config();
-
 const app: Express = express();
-const port = process.env.SERVER_PORT;
+const port = process.env.SERVER_PORT || 5000;
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('Express + TypeScript Server');
-});
 
-app.listen(port, () => {
-    console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-});
+
+
+
+const bootStrapServer = async () => {
+	const server = new ApolloServer({ typeDefs, resolvers })
+	try {
+		await server.start()
+		app.use(cors({ origin: ["http://localhost:3000"] }))
+		app.use(express.json())
+		app.use(express.urlencoded({ extended: false }))
+
+
+		app.use('/graphql', expressMiddleware(server, {
+			context: async ({ req, res }) => {
+				const token = req.headers.authorization
+				return { token }
+			}
+		}))
+
+		app.get('/', (req, res) => {
+			res.send("Hello World")
+		})
+
+		await sequelize.authenticate()
+		await sequelize.sync()
+		app.listen(port, () => {
+			console.log("database is running ...")
+			console.log("server is running ...")
+		})
+	} catch (err) {
+		console.error(err)
+	}
+}
+
+bootStrapServer()
