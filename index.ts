@@ -9,6 +9,7 @@ import { typeDefs } from './schema';
 dotenv.config();
 const app: Express = express();
 const port = process.env.SERVER_PORT || 5000;
+const origin = process.env.CLIENT_PORT || 3000
 
 
 
@@ -18,7 +19,7 @@ const bootStrapServer = async () => {
 	const server = new ApolloServer({ typeDefs, resolvers })
 	try {
 		await server.start()
-		app.use(cors({ origin: ["http://localhost:3000"] }))
+		app.use(cors({ origin: [origin as string] }))
 		app.use(express.json())
 		app.use(express.urlencoded({ extended: false }))
 
