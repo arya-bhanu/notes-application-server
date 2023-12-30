@@ -9,7 +9,7 @@ const authenticate = (context: any): { username: string, id: string } | null => 
         const decoded = jsonwebtoken.verify(authToken, process.env.ACCESS_TOKEN_SECRET as string) as any;
         return { username: decoded.username as string, id: decoded.id as string }
     } catch (err) {
-        return null;
+        throw err
     }
 }
 

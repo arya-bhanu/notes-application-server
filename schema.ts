@@ -20,6 +20,11 @@ export const typeDefs = `#graphql
         body: String
     }
 
+    input UpdateNote{
+        title: String,
+        body : String,
+        noteId : String
+    }
 
     input UserData{
         username : String,
@@ -29,11 +34,15 @@ export const typeDefs = `#graphql
     type Query{
         games : [Game]
         getAllNotes: [Note]
+        getNote(id: String!): Note
     }
     
     type Mutation{
         addUser(input: UserData): Boolean
         loginUser(input: UserData) : String
+
         addNote(input: NewNote): Boolean
+        deleteNote(input: String): Boolean
+        updateNote(input: UpdateNote): Boolean
     }
 `;

@@ -14,15 +14,39 @@ const resolvers = {
             try {
                 // security bypass
                 const auth = authenticate(context)
+                console.log(auth)
+                if (auth) {
+                    const { id, username } = auth
+                    if (!await authorizeUser(id)) {
+                        throw new Error("Unauthorized")
+                    }
+                    console.log(id)
+                    // business logic
+                    const notes = await NoteModel.findAll({ where: { userId: id } })
+                    return notes
+                }
+
+            } catch (err) {
+                console.error(err)
+                throw err
+            }
+        }
+        ,
+        async getNote(_: any, { id: noteId }: { id: string }, context: any) {
+            try {
+                // security bypass
+                const auth = authenticate(context)
+                console.log(auth)
                 if (auth) {
                     const { id, username } = auth
                     if (!await authorizeUser(id)) {
                         throw new Error("Unauthorized")
                     }
                     // business logic
-                    const notes = await NoteModel.findAll({ where: { userId: id } })
-                    return notes
+                    const note = await NoteModel.findByPk(noteId)
+                    return note
                 }
+
             } catch (err) {
                 console.error(err)
                 throw err
@@ -71,6 +95,50 @@ const resolvers = {
                     // business logic
                     const { title, body } = input
                     await NoteModel.create({ title, body, userId: id })
+                    return true
+                }
+            } catch (err) {
+                console.error(err)
+                throw err
+            }
+        },
+        async deleteNote(_: any, { input }: { input: any }, context: any) {
+            try {
+                // security bypass
+                const auth = authenticate(context)
+                if (auth) {
+                    const { id, username } = auth
+                    if (!await authorizeUser(id)) {
+                        throw new Error("Unauthorized")
+                    }
+                    // business logic
+                    const noteId = input
+                    const deleted = await NoteModel.destroy({ where: { id: noteId } })
+                    if (deleted <= 0) {
+                        throw new Error("No data is found. No data deleted")
+                    }
+                    return true
+                }
+            } catch (err) {
+                console.error(err)
+                throw err
+            }
+        },
+        async updateNote(_: any, { input }: { input: any }, context: any) {
+            try {
+                // security bypass
+                const auth = authenticate(context)
+                if (auth) {
+                    const { id, username } = auth
+                    if (!await authorizeUser(id)) {
+                        throw new Error("Unauthorized")
+                    }
+                    // business logic
+                    const { title, body, noteId } = input
+                    const [updated] = await NoteModel.update({ title, body }, { where: { id: noteId } })
+                    if (updated <= 0) {
+                        throw new Error("No data is found. No data updated")
+                    }
                     return true
                 }
             } catch (err) {
