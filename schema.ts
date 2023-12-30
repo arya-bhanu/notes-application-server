@@ -27,7 +27,6 @@ export const typeDefs = `#graphql
     }
 
     type Query{
-        games : [Game]
         getAllNotes: [Note]
         getNote(id: String!): Note
     }

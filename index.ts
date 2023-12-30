@@ -9,7 +9,7 @@ import { typeDefs } from './schema';
 dotenv.config();
 const app: Express = express();
 const port = process.env.SERVER_PORT || 5000;
-const origin = process.env.CLIENT_PORT || 3000
+const origin = process.env.CLIENT_URL || "http://localhost:3000"
 
 
 
