@@ -1,4 +1,3 @@
-import { dataGame } from "./_db"
 import bcrypt from 'bcrypt'
 import UserModel from "./models/User.model"
 import jsonwebtoken from 'jsonwebtoken'
@@ -7,9 +6,6 @@ import { authorizeUser } from "./middleware/authorize.middleware"
 import NoteModel from "./models/Note.model"
 const resolvers = {
     Query: {
-        games() {
-            return dataGame
-        },
         async getAllNotes(_: any, input: any, context: any) {
             try {
                 // security bypass

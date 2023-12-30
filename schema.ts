@@ -2,11 +2,6 @@ export const typeDefs = `#graphql
 
     scalar Date
 
-    type Game{
-        id : String,
-        title : String
-    }
-
     type Note{
         id : String,
         title : String, 
